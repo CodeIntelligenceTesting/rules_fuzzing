@@ -13,6 +13,7 @@
 # limitations under the License.
 
 load("@bazel_skylib//rules:common_settings.bzl", "bool_flag", "string_flag")
+load("//fuzzing/private:util.bzl", "repeatable_string_flag")
 
 label_flag(
     name = "cc_engine",
@@ -39,8 +40,12 @@ string_flag(
     visibility = ["//visibility:public"],
 )
 
-string_flag(
+repeatable_string_flag(
     name = "cc_engine_sanitizer",
+    # Due to https://github.com/bazelbuild/bazel/issues/13817, repeatable flags
+    # can only specify a singleton default value.
+    # TODO: Migrate to the repeatable attribute of config.string_list once Bazel
+    #  6 is the minimum supported version.
     build_setting_default = "none",
     values = [
         # No sanitizer instrumentation.

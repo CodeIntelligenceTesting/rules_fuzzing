@@ -15,6 +15,7 @@
 """Miscellaneous utilities."""
 
 load("@bazel_skylib//lib:paths.bzl", "paths")
+load("@bazel_skylib//rules:common_settings.bzl", "BuildSettingInfo")
 
 def _generate_file_impl(ctx):
     ctx.actions.write(ctx.outputs.output, ctx.attr.contents)
@@ -40,3 +41,33 @@ Generates a file with a specified content string.
 # via the rlocation function provided by Bazel's runfiles libraries.
 def runfile_path(ctx, runfile):
     return paths.normalize(ctx.workspace_name + "/" + runfile.short_path)
+
+# Based on
+# https://github.com/bazelbuild/bazel-skylib/blob/5bfcb1a684550626ce138fe0fe8f5f702b3764c3/rules/common_settings.bzl#L72
+def _no_at_str(label):
+    """Strips any leading '@'s for labels in the main repo, so that the error string is more friendly."""
+    s = str(label)
+    if s.startswith("@@//"):
+        return s[2:]
+    if s.startswith("@//"):
+        return s[1:]
+    return s
+
+def _repeatable_string_flag_impl(ctx):
+    allowed_values = ctx.attr.values
+    actual_values = ctx.build_setting_value
+    for value in actual_values:
+        if value not in allowed_values:
+            fail("Error setting " + _no_at_str(ctx.label) + ": invalid value '" + value + "'. Allowed values are " + str(allowed_values))
+    return BuildSettingInfo(value = actual_values)
+
+repeatable_string_flag = rule(
+    implementation = _repeatable_string_flag_impl,
+    build_setting = config.string(flag = True, allow_multiple = True),
+    attrs = {
+        "values": attr.string_list(
+            doc = "The list of allowed values for this setting. An error is raised if any other value is given.",
+        ),
+    },
+    doc = "A string-typed build setting that can be set on the command line",
+)
