@@ -43,6 +43,12 @@ build:ubsan-libfuzzer --//fuzzing:cc_engine=//fuzzing/engines:libfuzzer
 build:ubsan-libfuzzer --@rules_fuzzing//fuzzing:cc_engine_instrumentation=libfuzzer
 build:ubsan-libfuzzer --@rules_fuzzing//fuzzing:cc_engine_sanitizer=ubsan
 
+# LibFuzzer + ASAN + UBSAN
+build:asan-ubsan-libfuzzer --//fuzzing:cc_engine=//fuzzing/engines:libfuzzer
+build:asan-ubsan-libfuzzer --@rules_fuzzing//fuzzing:cc_engine_instrumentation=libfuzzer
+build:asan-ubsan-libfuzzer --@rules_fuzzing//fuzzing:cc_engine_sanitizer=asan
+build:asan-ubsan-libfuzzer --@rules_fuzzing//fuzzing:cc_engine_sanitizer=ubsan
+
 # Honggfuzz + ASAN
 build:asan-honggfuzz --//fuzzing:cc_engine=//fuzzing/engines:honggfuzz
 build:asan-honggfuzz --@rules_fuzzing//fuzzing:cc_engine_instrumentation=honggfuzz

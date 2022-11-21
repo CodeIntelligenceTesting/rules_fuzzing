@@ -63,11 +63,18 @@ def _fuzzing_binary_transition_impl(settings, _attr):
     else:
         fail("unsupported engine instrumentation '%s'" % instrum_config)
 
-    sanitizer_config = settings["@rules_fuzzing//fuzzing:cc_engine_sanitizer"]
-    if sanitizer_config in sanitizer_configs:
-        opts = instrum_opts.merge(opts, sanitizer_configs[sanitizer_config])
-    else:
-        fail("unsupported sanitizer '%s'" % sanitizer_config)
+    sanitizers = settings["@rules_fuzzing//fuzzing:cc_engine_sanitizer"]
+
+    # Workaround for https://github.com/bazelbuild/bazel/issues/15653:
+    # Repeatable flags are represented as strings rather than singleton lists if
+    # they are only specified once.
+    if type(sanitizers) == type(""):
+        sanitizers = [sanitizers]
+    for sanitizer in sanitizers:
+        if sanitizer in sanitizer_configs:
+            opts = instrum_opts.merge(opts, sanitizer_configs[sanitizer])
+        else:
+            fail("unsupported sanitizer '%s'" % sanitizer)
 
     return {
         "//command_line_option:copt": opts.copts,

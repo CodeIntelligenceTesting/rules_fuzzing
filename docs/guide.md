@@ -186,6 +186,12 @@ build:ubsan-libfuzzer --@rules_fuzzing//fuzzing:cc_engine=@rules_fuzzing//fuzzin
 build:ubsan-libfuzzer --@rules_fuzzing//fuzzing:cc_engine_instrumentation=libfuzzer
 build:ubsan-libfuzzer --@rules_fuzzing//fuzzing:cc_engine_sanitizer=ubsan
 
+# --config=asan-ubsan-libfuzzer
+build:asan-ubsan-libfuzzer --@rules_fuzzing//fuzzing:cc_engine=//fuzzing/engines:libfuzzer
+build:asan-ubsan-libfuzzer --@rules_fuzzing//fuzzing:cc_engine_instrumentation=libfuzzer
+build:asan-ubsan-libfuzzer --@rules_fuzzing//fuzzing:cc_engine_sanitizer=asan
+build:asan-ubsan-libfuzzer --@rules_fuzzing//fuzzing:cc_engine_sanitizer=ubsan
+
 # --config=asan-honggfuzz
 build:asan-honggfuzz --@rules_fuzzing//fuzzing:cc_engine=@rules_fuzzing//fuzzing/engines:honggfuzz
 build:asan-honggfuzz --@rules_fuzzing//fuzzing:cc_engine_instrumentation=honggfuzz
